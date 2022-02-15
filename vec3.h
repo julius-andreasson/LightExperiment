@@ -73,19 +73,19 @@ inline vec3 operator*(const vec3 &u, const vec3 &v) {
     return vec3(u.e[0] * v.e[0], u.e[1] * v.e[1], u.e[2] * v.e[2]);
 }
 
-inline vec3 operator*(const float s, const vec3 &u) {
+inline vec3 operator*(float s, const vec3 &u) {
     return vec3(u.e[0] * s, u.e[1] * s, u.e[2] * s);
 }
 
-inline vec3 operator*(const vec3 &u, const float s) {
+inline vec3 operator*(const vec3 &u, float s) {
     return u * s;
 }
 
-inline vec3 operator/(vec3 &u, float s) {
-    return u * (1/s);
+inline vec3 operator/(vec3 u, float s) {
+    return (1/s) * u;
 }
 
-inline vec3 operator/(float s, vec3 &u) {
+inline vec3 operator/(float s, vec3 u) {
     return u / s;
 }
 
