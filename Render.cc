@@ -19,7 +19,6 @@ int main() {
         if (j % 10 == 0) {
             int percent = int(100 * float(j) / (image_height - 1));
             std::cerr << percent << "\% done.\n";
-            // std::cerr << j << " out of " << image_height << " rows rendered.\n";
         }
         for (int i = 0; i < image_width; ++i) {
             auto r = double(i) / (image_width - 1);
