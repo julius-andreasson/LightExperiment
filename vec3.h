@@ -85,7 +85,7 @@ inline vec3 operator*(float s, const vec3 &u) {
 }
 
 inline vec3 operator*(const vec3 &u, float s) {
-    return u * s;
+    return s * u;
 }
 
 inline vec3 operator/(vec3 u, float s) {

@@ -41,19 +41,29 @@ int main() {
 
     // Image
     const auto aspect_ratio = 16.0 / 9.0;
-    const int image_width = 1600;
+    const int image_width = 400;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
     const int samples_per_pixel = 100;
-    const int max_bounces = 50;
+    const int max_bounces = 10;
 
+    // Camera
+    point3 lookfrom = point3(5, 3, 8);
+    point3 lookat = point3(0, 0, 0);
+    vec3 vup(0, 1, 0); // "view up" vector
+    float vfov = 70; // Vertical field of view, degrees
+    float aperture = 0.1;
+    float focus_dist = 10;//(lookfrom - lookat).length();
+    // Create a camera with all of these settings. 
+    camera cam(lookfrom, lookat, vup, vfov, aspect_ratio, aperture, focus_dist);
+    
     // World
     hittable_list world;
 
-    auto material_ground = make_shared<lambertian>(color(0.8, 0.8, 0.0));
+    auto material_ground = make_shared<lambertian>(color(0.4, 0.4, 0.4));
     auto material_left = make_shared<lambertian>(color(0.7, 0.3, 0.3));
-    auto glass   = make_shared<dielectric>(1.5);
-    auto steel  = make_shared<metal>(color(0.8, 0.8, 0.8), 0.0);
-    auto gold  = make_shared<metal>(color(205.0 / 255, 127.0 / 255, 50.0 / 255), 0.0);
+    auto glass   = make_shared<dielectric>(1.9);
+    auto steel  = make_shared<metal>(color(0.3, 0.5, 0.3), 0.2);
+    auto gold  = make_shared<metal>(color(205.0 / 255, 157.0 / 255, 70.0 / 255), 0.0);
     auto fuzzy_gold  = make_shared<metal>(color(205.0 / 255, 127.0 / 255, 50.0 / 255), 0.5);
     auto material_right_red  = make_shared<lambertian>(color(1.0, 0.0, 0.0));
 
@@ -62,15 +72,12 @@ int main() {
     world.add(make_shared<sphere>(point3( -1.2, 0, -1), 0.5, glass)); // mid sphere
     world.add(make_shared<sphere>(point3( -1.2, 0, -1), -0.4, glass)); // mid sphere
     world.add(make_shared<sphere>(point3( 1, 1.1, -1.2), 0.5, glass)); // top-right sphere
-    world.add(make_shared<sphere>(point3( 1, 1.1, -1.2), -0.4, glass)); // top-right sphere
+    // world.add(make_shared<sphere>(point3( 1, 1.1, -1.2), -0.4, glass)); // top-right sphere
     world.add(make_shared<sphere>(point3( -0.3, 1.1, -1.2), 0.5, steel)); // top sphere
     world.add(make_shared<sphere>(point3( 0, 0, -1), 0.5, gold)); // right sphere
     world.add(make_shared<sphere>(point3( 1.2, 0, -1), 0.5, fuzzy_gold)); // right sphere
     world.add(make_shared<sphere>(point3( 7, 2.5, -5), 2.5, material_right_red)); // right-back sphere
 
-    // Camera
-    camera cam(90, 16.0 / 9.0);
-    
     // Render
     std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
     for (int j = image_height - 1; j >= 0; --j) {
@@ -85,6 +92,7 @@ int main() {
             for (int s = 0; s < samples_per_pixel; ++s) {
                 auto u = float(i + random_float()) / (image_width - 1);
                 auto v = float(j + random_float()) / (image_height - 1);
+                
                 ray r = cam.get_ray(u, v);
                 pixel_color += ray_color(r, world, max_bounces);
             }
