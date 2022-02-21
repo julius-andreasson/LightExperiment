@@ -14,7 +14,6 @@ class camera {
             float aperture,
             float focus_dist
         ) {
-            // auto aspect_ratio = 16.0 / 9.0;
             auto theta = degrees_to_radians(vfov);
             auto h = tan(theta/2);
             auto viewport_height = 2.0 * h;
@@ -35,7 +34,7 @@ class camera {
 
         ray get_ray(float s, float t) const {
             vec3 rd = lens_radius * random_in_unit_disk();
-            vec3 offset = u * rd.x() + v * rd.y();
+            vec3 offset = u * rd.x + v * rd.y;
             
             return ray(
                 origin + offset, 

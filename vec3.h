@@ -10,27 +10,23 @@ class vec3 {
         vec3() : e{0,0,0} {}
         vec3(float e0, float e1, float e2) : e{e0, e1, e2} {}
 
-        float x() const { return e[0]; }
-        float y() const { return e[1]; }
-        float z() const { return e[2]; }
-
-        vec3 operator-() const { return vec3(-e[0], -e[1], -e[2]); }
+        vec3 operator-() const { return vec3(-x, -y, -z); }
         float operator[](int i) const { return e[i]; }
         float& operator[](int i) { return e[i]; }
 
         // Returns element-wise sum of this and vec3 v
         vec3& operator+=(const vec3 &v) {
-            e[0] += v.e[0];
-            e[1] += v.e[1];
-            e[2] += v.e[2];
+            x += v.x;
+            y += v.y;
+            z += v.z;
             return *this;
         }
 
         // Returns itself multiplied by the scalar s
         vec3& operator*=(const float s) {
-            e[0] *= s;
-            e[1] *= s;
-            e[2] *= s;
+            x *= s;
+            y *= s;
+            z *= s;
             return *this;
         }
         
@@ -44,18 +40,26 @@ class vec3 {
         }
 
         float length_squared() const {
-            return e[0]*e[0] + e[1]*e[1] + e[2]*e[2];
+            return x*x + y*y + z*z;
         }
 
         bool near_zero() const {
             const auto lim = 1e-8;
-            return (fabsf(e[0]) < lim && fabsf(e[1]) < lim && fabsf(e[2]) < lim);
+            return (fabsf(x) < lim && fabsf(y) < lim && fabsf(z) < lim);
         }
 
         // random_sphere functions supposed to be here put in rtweekend.h
         // to avoid redefinition
     public:
-        float e[3];
+        union {
+            float e[3];
+            struct{
+                float x, y, z;
+            };
+            struct{
+                float r, g, b;
+            };
+        };
 };
 
 // Type aliases to avoid mix-up, since this class is used for both colors and positions.
@@ -65,23 +69,23 @@ using color = vec3; // RGB color
 // vec3 Utility functions
 
 inline std::ostream& operator<<(std::ostream &out, const vec3 &v) {
-    return out << v.e[0] << ' ' << v.e[1] << ' ' << v.e[2];
+    return out << v.x << ' ' << v.y << ' ' << v.z;
 }
 
 inline vec3 operator+(const vec3 &u, const vec3 &v) {
-    return vec3(u.e[0] + v.e[0], u.e[1] + v.e[1], u.e[2] + v.e[2]);
+    return vec3(u.x + v.x, u.y + v.y, u.z + v.z);
 }
 
 inline vec3 operator-(const vec3 &u, const vec3 &v) {
-    return vec3(u.e[0] - v.e[0], u.e[1] - v.e[1], u.e[2] - v.e[2]);
+    return vec3(u.x - v.x, u.y - v.y, u.z - v.z);
 }
 
 inline vec3 operator*(const vec3 &u, const vec3 &v) {
-    return vec3(u.e[0] * v.e[0], u.e[1] * v.e[1], u.e[2] * v.e[2]);
+    return vec3(u.x * v.x, u.y * v.y, u.z * v.z);
 }
 
 inline vec3 operator*(float s, const vec3 &u) {
-    return vec3(u.e[0] * s, u.e[1] * s, u.e[2] * s);
+    return vec3(u.x * s, u.y * s, u.z * s);
 }
 
 inline vec3 operator*(const vec3 &u, float s) {
@@ -97,15 +101,15 @@ inline vec3 operator/(float s, vec3 u) {
 }
 
 inline float dot(const vec3 &u, const vec3 &v) {
-    return u.e[0] * v.e[0]
-         + u.e[1] * v.e[1]
-         + u.e[2] * v.e[2];
+    return u.x * v.x
+         + u.y * v.y
+         + u.z * v.z;
 }
 
 inline vec3 cross(const vec3 &u, const vec3 &v) {
-    return vec3(u.e[1] * v.e[2] - u.e[2] * v.e[1],
-                u.e[2] * v.e[0] - u.e[0] * v.e[2],
-                u.e[0] * v.e[1] - u.e[1] * v.e[0]);
+    return vec3(u.y * v.z - u.z * v.y,
+                u.z * v.x - u.x * v.z,
+                u.x * v.y - u.y * v.x);
 }
 
 inline vec3 unit_vector(vec3 v) {

@@ -92,7 +92,7 @@ color ray_color(const ray& r, const hittable& world, int max_bounces_remaining) 
     }
     // Background color
     vec3 unit_direction = unit_vector(r.direction());
-    auto t = 0.5 * (sin(unit_direction.y()*3) + 1.0); 
+    auto t = 0.5 * (sin(unit_direction.y*3) + 1.0); 
     // Return a linear blend between two colors
     return (1.0 - t) * color(0.1, 1.0, 0.1) + t * color(1, 1, 1);
 }
@@ -103,7 +103,7 @@ int main() {
 
     // Image
     const auto aspect_ratio = 1080.0 / 2340.0;
-    const int image_width = 1080;
+    const int image_width = 30;
     // 1080 x 2340 p
     const int image_height = static_cast<int>(image_width / aspect_ratio); 
     const int samples_per_pixel = 10;

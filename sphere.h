@@ -18,12 +18,11 @@ class sphere : public hittable {
             shared_ptr<material> mat_ptr;
 };
 
-// §inline
 inline bool sphere::hit(const ray& r, float t_min, float t_max, hit_record& rec) const {
     vec3 oc = r.origin() - center;
-    auto a = r.direction().length_squared();//dot(r.direction(), r.direction());
+    auto a = r.direction().length_squared();
     auto half_b = dot(oc, r.direction());
-    auto c = oc.length_squared() - radius * radius;//dot(oc, oc) - radius * radius;
+    auto c = oc.length_squared() - radius * radius;
     
     auto discriminant = half_b*half_b - a*c;
     if (discriminant < 0) return false;
