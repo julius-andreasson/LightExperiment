@@ -59,14 +59,14 @@ hittable_list scene() {
     currMat = gold;
     world.add(make_shared<sphere>(pos, r, currMat));
     
-    // for (int x = -1; x < 7; x++) {
-    //     for (int y = -6; y < 7; y++) {
-    //         r = 0.1 + 0.7 * random_float();
-    //         pos = point3(1.6*x, 1.6*y, -4 + random_float());
-    //         currMat = make_shared<metal>(color(random_float(), random_float(), random_float()), random_float());
-    //         world.add(make_shared<sphere>(pos, r, currMat));
-    //     }
-    // }
+    for (int x = -1; x < 7; x++) {
+        for (int y = -6; y < 7; y++) {
+            r = 0.1 + 0.7 * random_float();
+            pos = point3(1.6*x, 1.6*y, -4 + random_float());
+            currMat = make_shared<metal>(color(random_float(), random_float(), random_float()), random_float());
+            world.add(make_shared<sphere>(pos, r, currMat));
+        }
+    }
     return world;
 }
 
@@ -103,11 +103,11 @@ int main() {
 
     // Image
     const auto aspect_ratio = 1080.0 / 2340.0;
-    const int image_width = 300;
+    const int image_width = 1080;
     // 1080 x 2340 p
     const int image_height = static_cast<int>(image_width / aspect_ratio); 
-    const int samples_per_pixel = 2;
-    const int max_bounces = 2;
+    const int samples_per_pixel = 10;
+    const int max_bounces = 8;
 
     // Camera
     point3 lookfrom = point3(-15, 0, 25);
@@ -130,8 +130,9 @@ int main() {
         if (j % 10 == 0) {
             float percent = (1 - (float(j) / (image_height - 1)));
             time_t t1 = time(&t1);
-            std::cerr << int(percent*100) << "\% done, elapsed time: " 
-                << (t1 - t0) << " s, est. time remaining: " << int(float(t1 - t0) / percent) << " s." << std::flush;
+            float t = t1 - t0;
+            std::cerr << int(percent*100) << "\% done. " 
+                << t << " s passed, est. " << int(t / percent - t) << " s remaining.\n" << std::flush;
         }
         for (int i = 0; i < image_width; ++i) {
             color pixel_color = color(0, 0, 0);
