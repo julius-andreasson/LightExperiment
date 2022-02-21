@@ -23,7 +23,9 @@ hittable_list scene() {
     auto glass   = make_shared<dielectric>(1.5);
     auto water   = make_shared<dielectric>(1.33);
     auto steel  = make_shared<metal>(color(0.4, 0.4, 0.5), 0.3);
-    auto gold  = make_shared<metal>(color(205.0 / 255, 157.0 / 255, 70.0 / 255), 0.0);
+    auto gold  = make_shared<metal>(color(212.0 / 255, 175.0 / 255, 55.0 / 255), 0.0);
+    //rgb(212,175,55)
+    // auto gold  = make_shared<metal>(color(205.0 / 255, 157.0 / 255, 70.0 / 255), 0.0);
     auto fuzzy_gold  = make_shared<metal>(color(205.0 / 255, 127.0 / 255, 50.0 / 255), 0.5);
     auto lamb_red  = make_shared<lambertian>(color(1.0, 0.0, 0.0));
     auto lamb_green  = make_shared<lambertian>(color(0.0, 1.0, 0.0));
@@ -33,7 +35,7 @@ hittable_list scene() {
     float ty = 1.25;
     float tx = sqrt(r*r + ty*ty);
     point3 pos(tx - 0.3, -0.7, 0);
-    shared_ptr<material> currMat = fuzzy_gold;
+    shared_ptr<material> currMat = gold;
     world.add(make_shared<sphere>(pos, r, currMat));
     // 2nd big ball
     r = 1.25;
@@ -92,9 +94,12 @@ color ray_color(const ray& r, const hittable& world, int max_bounces_remaining) 
     }
     // Background color
     vec3 unit_direction = unit_vector(r.direction());
-    auto t = 0.5 * (sin(unit_direction.y*3) + 1.0); 
-    // Return a linear blend between two colors
-    return (1.0 - t) * color(0.1, 1.0, 0.1) + t * color(1, 1, 1);
+    auto y = 0.5 * (sin(unit_direction.y*3) + 1.0); 
+    return (1 - y) * color(.1, .1, 1) + y * color(1, 1, 1);
+    // auto ty = 0.25 * (sin(unit_direction.y*50) + 1.0); 
+    // auto tx = 0.25 * (cos(unit_direction.x*30) + 1.0); 
+    // // Return a linear blend between two colors
+    // return (1 - ty) * color(0, 0, 1) + ty * color(1, 0, 0) + (1 - tx) * color(0, 1, 0) + 1 * tx * color(0, 0, 0);
 }
 
 int main() {
@@ -103,11 +108,11 @@ int main() {
 
     // Image
     const auto aspect_ratio = 1080.0 / 2340.0;
-    const int image_width = 30;
+    const int image_width = 1080;
     // 1080 x 2340 p
     const int image_height = static_cast<int>(image_width / aspect_ratio); 
-    const int samples_per_pixel = 10;
-    const int max_bounces = 8;
+    const int samples_per_pixel = 50;
+    const int max_bounces = 16;
 
     // Camera
     point3 lookfrom = point3(-15, 0, 25);
