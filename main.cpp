@@ -14,6 +14,7 @@
 #include <math.h>
 #include <ostream>
 #include <time.h>
+#include <execution>
 
 hittable_list scene() {
     hittable_list world;
@@ -24,8 +25,6 @@ hittable_list scene() {
     auto water   = make_shared<dielectric>(1.33);
     auto steel  = make_shared<metal>(color(0.4, 0.4, 0.5), 0.3);
     auto gold  = make_shared<metal>(color(212.0 / 255, 175.0 / 255, 55.0 / 255), 0.0);
-    //rgb(212,175,55)
-    // auto gold  = make_shared<metal>(color(205.0 / 255, 157.0 / 255, 70.0 / 255), 0.0);
     auto fuzzy_gold  = make_shared<metal>(color(205.0 / 255, 127.0 / 255, 50.0 / 255), 0.5);
     auto lamb_red  = make_shared<lambertian>(color(1.0, 0.0, 0.0));
     auto lamb_green  = make_shared<lambertian>(color(0.0, 1.0, 0.0));
@@ -96,10 +95,15 @@ color ray_color(const ray& r, const hittable& world, int max_bounces_remaining) 
     vec3 unit_direction = unit_vector(r.direction());
     auto y = 0.5 * (sin(unit_direction.y*3) + 1.0); 
     return (1 - y) * color(.1, .1, 1) + y * color(1, 1, 1);
-    // auto ty = 0.25 * (sin(unit_direction.y*50) + 1.0); 
-    // auto tx = 0.25 * (cos(unit_direction.x*30) + 1.0); 
-    // // Return a linear blend between two colors
-    // return (1 - ty) * color(0, 0, 1) + ty * color(1, 0, 0) + (1 - tx) * color(0, 1, 0) + 1 * tx * color(0, 0, 0);
+}
+
+void colorPixel(float u, float v, ray r, hittable_list world, int max_bounces, int samples_per_pixel) {
+  color pixel_color = color(0, 0, 0);
+  // run multiple samples
+  for (int s = 0; s < samples_per_pixel; ++s) {
+    pixel_color += ray_color(r, world, max_bounces);
+  }
+  write_color(std::cout, pixel_color, samples_per_pixel);
 }
 
 int main() {
@@ -108,10 +112,9 @@ int main() {
 
     // Image
     const auto aspect_ratio = 1080.0 / 2340.0;
-    const int image_width = 1080;
-    // 1080 x 2340 p
+    const int image_width = 300; // 1080 x 2340 p
     const int image_height = static_cast<int>(image_width / aspect_ratio); 
-    const int samples_per_pixel = 50;
+    const int samples_per_pixel = 20;
     const int max_bounces = 16;
 
     // Camera
@@ -140,16 +143,11 @@ int main() {
                 << t << " s passed, est. " << int(t / percent - t) << " s remaining.\n" << std::flush;
         }
         for (int i = 0; i < image_width; ++i) {
-            color pixel_color = color(0, 0, 0);
-            // run multiple samples
-            for (int s = 0; s < samples_per_pixel; ++s) {
-                auto u = float(i + random_float()) / (image_width - 1);
-                auto v = float(j + random_float()) / (image_height - 1);
-                
-                ray r = cam.get_ray(u, v);
-                pixel_color += ray_color(r, world, max_bounces);
-            }
-            write_color(std::cout, pixel_color, samples_per_pixel);
+          auto u = float(i + random_float()) / (image_width - 1);
+          auto v = float(j + random_float()) / (image_height - 1);
+          ray r = cam.get_ray(u, v);
+          // std::for_each(std::execution::par);
+          colorPixel(u, v, r, world, max_bounces, samples_per_pixel);
         }
     }
 
