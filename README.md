@@ -1,6 +1,6 @@
 # LightExperiment
 
-Simple raycasting program. Closely follows the guide [RayTracing In One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html).
+Simple raytracing program. Closely follows the guide [RayTracing In One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html).
 
 Generates .ppm image files.
 
