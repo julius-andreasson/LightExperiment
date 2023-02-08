@@ -1,2 +1,3 @@
 .vscode/*
-Outputs/*
+Output/*
+!Output/bg2_hd.png
